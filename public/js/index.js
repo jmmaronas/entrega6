@@ -10,11 +10,17 @@ const formProductos=document.getElementById("datosProductos")
 
 
 socket.on("bienvenida", data=>{
-    console.log(data)
+    data.map(element=>{
+        chatContainer.innerHTML+=`
+        <div>
+            <strong class="text-primary">${element.usuario}</strong><span class="text-danger">[${element.date}]</span>:
+                <em class="text-success" >${element.mensaje}</em>
+        </div>                
+    `
+})
 })
 
 btnMessage.addEventListener("click", (e)=>{
-    console.log(message.value)
     socket.emit("mensajeCliente",{usuario:usuario.value, mensaje:message.value, date:(new Date).toLocaleString()} )
 })
 

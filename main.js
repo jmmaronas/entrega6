@@ -6,6 +6,7 @@ const path = require("path")
 
 const PORT = process.env.PORT || 8080
 const products=[]
+const mensajes=[]
 
 const app = express()
 const httpServer = new HttpServer(app)
@@ -32,20 +33,16 @@ server.on("error", (err) => {
 
 io.on("connection", socket => {
     console.log("NuevoCliente concectado", socket.id)
-    socket.emit("bienvenida", "Hola")
+    socket.emit("bienvenida", mensajes)
     socket.emit("bdProductos", products)
 
     socket.on("newProduct", data=>{
         products.push(data)
         io.sockets.emit("bdProductos", products)
     })
-
-    socket.on("datosUsuario", data => {
-        usuarios.push({ ...data, id: socket.id })
-        socket.emit("mensajeServidor", { ...data, id: socket.id })
-    })
+    
     socket.on("mensajeCliente", data => {
-        console.log({ data })
+        mensajes.push({...data, id:socket.id})
         io.sockets.emit("mensajeProvedor", data)
     })
 }) 
