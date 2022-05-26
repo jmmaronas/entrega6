@@ -3,9 +3,9 @@ const { Server: HttpServer } = require("http")
 const { Server: IOServer } = require("socket.io")
 const ejs = require("ejs")
 const path = require("path")
+const {archivoJson, archivoChat} = require("./src/services/app.js")
 
 const PORT = process.env.PORT || 8080
-const products=[]
 const mensajes=[]
 
 const app = express()
@@ -31,18 +31,18 @@ server.on("error", (err) => {
     console.error(err)
 })
 
-io.on("connection", socket => {
+io.on("connection",async socket => {
     console.log("NuevoCliente concectado", socket.id)
-    socket.emit("bienvenida", mensajes)
-    socket.emit("bdProductos", products)
+    socket.emit("bienvenida", await archivoChat.getAll())
+    socket.emit("bdProductos", await archivoJson.getAll())
 
-    socket.on("newProduct", data=>{
-        products.push(data)
-        io.sockets.emit("bdProductos", products)
+    socket.on("newProduct",async data=>{
+        await archivoJson.save(data)
+        io.sockets.emit("bdProductos", await archivoJson.getAll())
     })
     
-    socket.on("mensajeCliente", data => {
-        mensajes.push({...data, id:socket.id})
+    socket.on("mensajeCliente",async data => {
+        await archivoChat.save(data)
         io.sockets.emit("mensajeProvedor", data)
     })
 }) 

@@ -21,7 +21,8 @@ socket.on("bienvenida", data=>{
 })
 
 btnMessage.addEventListener("click", (e)=>{
-    socket.emit("mensajeCliente",{usuario:usuario.value, mensaje:message.value, date:(new Date).toLocaleString()} )
+    socket.emit("mensajeCliente",{usuario:usuario.value, mensaje:message.value, date:(new Date()).toLocaleString()})
+    message.value=""
 })
 
 formProductos.addEventListener("submit", (e)=>{
@@ -30,6 +31,7 @@ formProductos.addEventListener("submit", (e)=>{
     let price=document.getElementById("precioProducto").value
     let img=document.getElementById("imgProducto").value
     socket.emit("newProduct", {name, price, img})
+    e.target.reset()
 })
 
 socket.on("mensajeProvedor", data=>{
